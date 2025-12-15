@@ -37,3 +37,8 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+
+
+
+backend/app.yaml

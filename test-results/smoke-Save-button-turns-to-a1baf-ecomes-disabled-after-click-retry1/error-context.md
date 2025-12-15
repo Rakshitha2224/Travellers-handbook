@@ -1,0 +1,63 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - img "Traveller's Handbook logo" [ref=e5] [cursor=pointer]
+    - generic [ref=e6]:
+      - link "Home" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - link "Art & Crafts" [ref=e8] [cursor=pointer]:
+        - /url: /arts
+      - link "Festivals" [ref=e9] [cursor=pointer]:
+        - /url: /festivals
+      - link "Holidays & Itinerary" [ref=e10] [cursor=pointer]:
+        - /url: /holidays
+      - link "Saved Places" [ref=e11] [cursor=pointer]:
+        - /url: /saved
+    - button "Sign in with Google" [ref=e13]
+  - main [ref=e15]:
+    - heading "Holidays & Itinerary" [level=2] [ref=e16]
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - combobox [ref=e19]:
+          - option "-- Choose state --"
+          - option "Telangana" [selected]
+          - option "Tamil Nadu"
+          - option "Karnataka"
+          - option "Maharashtra"
+          - option "Uttar Pradesh"
+          - option "Delhi"
+          - option "Kerala"
+          - option "Goa"
+        - button "View 3-Day Itinerary" [ref=e20]
+      - generic [ref=e22]:
+        - heading "Weather in Hyderabad" [level=4] [ref=e23]
+        - paragraph [ref=e24]: 🌡️ 26°C — haze
+        - paragraph [ref=e25]: "Humidity: 34%"
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - img "Charminar" [ref=e29]
+        - generic [ref=e30]:
+          - heading "Charminar" [level=4] [ref=e31]
+          - paragraph [ref=e32]: Historic monument in Hyderabad
+          - generic [ref=e33]:
+            - button "Map" [ref=e34]
+            - button "Save" [active] [ref=e35]
+      - generic [ref=e36]:
+        - img "Golconda Fort" [ref=e38]
+        - generic [ref=e39]:
+          - heading "Golconda Fort" [level=4] [ref=e40]
+          - paragraph [ref=e41]: Ancient fortress
+          - generic [ref=e42]:
+            - button "Map" [ref=e43]
+            - button "Save" [ref=e44]
+      - generic [ref=e45]:
+        - img "Ramoji Film City" [ref=e47]
+        - generic [ref=e48]:
+          - heading "Ramoji Film City" [level=4] [ref=e49]
+          - paragraph [ref=e50]: World’s largest film studio
+          - generic [ref=e51]:
+            - button "Map" [ref=e52]
+            - button "Save" [ref=e53]
+```
