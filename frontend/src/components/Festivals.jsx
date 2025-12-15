@@ -1,7 +1,7 @@
-import rakhiImg from "../assets/project images/rakhi.png";
-import christmasImg from "../assets/project images/christmas.png";
-import bathukammaImg from "../assets/project images/bathukamma.png";
-import onamImg from "../assets/project images/onam.png";
+const rakhiImg = "/images/rakhi.png";
+const christmasImg = "/images/christmas.png";
+const bathukammaImg = "/images/bathukamma.png";
+const onamImg = "/images/onam.png";
 
 export default function Festivals() {
   const FESTIVALS = [

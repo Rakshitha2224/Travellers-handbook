@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion as Motion } from "framer-motion";
 import { createPortal } from "react-dom";
 
@@ -57,31 +57,45 @@ export default function ItineraryModal({
   places = [],
   itinerary = [],
   user,
-  onDeleteDay,   // ✅ comes from parent
-  onReorderDays, // ✅ optional (drag reorder)
+  onDeleteDay,
+  onReorderDays,
 }) {
   if (!open) return null;
 
+  /* ✅ LOCAL WORKING COPY (FIX) */
+  const [localItinerary, setLocalItinerary] = useState([]);
+
+  /* sync ONLY when modal opens */
+  useEffect(() => {
+    if (open) {
+      setLocalItinerary(itinerary);
+    }
+  }, [open, itinerary]);
+
+  /* ---------- Drag reorder ---------- */
   const handleDragEnd = ({ active, over }) => {
     if (!over || active.id === over.id) return;
 
-    const reordered = arrayMove(
-      itinerary,
-      itinerary.findIndex((d) => d.day === active.id),
-      itinerary.findIndex((d) => d.day === over.id)
-    );
+    const oldIndex = localItinerary.findIndex((d) => d.day === active.id);
+    const newIndex = localItinerary.findIndex((d) => d.day === over.id);
 
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(localItinerary, oldIndex, newIndex);
+    setLocalItinerary(reordered);
     onReorderDays?.(reordered);
   };
 
+  /* ---------- Image resolver ---------- */
   const getDayImage = (day) => {
-    const first = day?.activities?.[0] || "";
+    const first = day?.activities?.[0]?.toLowerCase() || "";
     const match = places.find((p) =>
-      first.toLowerCase().includes((p?.name || "").toLowerCase())
+      first.includes(p.name.toLowerCase())
     );
     return match?.img || "";
   };
 
+  /* ---------- Delete day (FIXED) ---------- */
   const handleDelete = (dayId) => {
     if (!user) {
       alert("Please sign in with Google to modify itinerary");
@@ -90,8 +104,17 @@ export default function ItineraryModal({
 
     if (!window.confirm("Are you sure you want to delete this day?")) return;
 
-    onDeleteDay(dayId); // 🔥 parent update
+    const updated = localItinerary.filter((d) => d.day !== dayId);
+    setLocalItinerary(updated);      // 🔥 instant UI update
+    onDeleteDay(dayId);              // 🔥 parent/backend sync
   };
+const resolveHotel = (day) => {
+  if (day.hotel) return day.hotel;
+
+  // fallback: find original hotel using day label
+  const original = itinerary.find((d) => d.day === day.day);
+  return original?.hotel || null;
+};
 
   return createPortal(
     <div style={overlayStyle} onClick={onClose}>
@@ -105,10 +128,10 @@ export default function ItineraryModal({
 
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext
-            items={itinerary.map((d) => d.day)}
+            items={localItinerary.map((d) => d.day)}
             strategy={verticalListSortingStrategy}
           >
-            {itinerary.map((day, index) => (
+            {localItinerary.map((day, index) => (
               <SortableDayWrapper key={day.day} id={day.day}>
                 {({ attributes, listeners }) => (
                   <div
@@ -123,7 +146,7 @@ export default function ItineraryModal({
                       position: "relative",
                     }}
                   >
-                    {/* Drag handle */}
+                    {/* Drag */}
                     <span
                       {...attributes}
                       {...listeners}
@@ -140,12 +163,7 @@ export default function ItineraryModal({
 
                     {/* Delete */}
                     <button
-                      type="button"
-                      onPointerDown={(e) => e.stopPropagation()}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(day.day);
-                      }}
+                      onClick={() => handleDelete(day.day)}
                       style={{
                         position: "absolute",
                         top: 8,
@@ -163,7 +181,7 @@ export default function ItineraryModal({
                     {getDayImage(day) && (
                       <img
                         src={getDayImage(day)}
-                        alt=""
+                        alt={day.day}
                         style={{
                           width: 90,
                           height: 90,
@@ -174,31 +192,35 @@ export default function ItineraryModal({
                     )}
 
                     <div style={{ flex: 1 }}>
-                      <h3 style={{ margin: "0 0 4px" }}>
-                        Day {index + 1}
-                      </h3>
+  {(() => {
+    const hotel = resolveHotel(day);
 
-                      <ul style={{ margin: "0 0 6px", paddingLeft: 16 }}>
-                        {(day.activities || []).map((a, i) => (
-                          <li key={i}>{a}</li>
-                        ))}
-                      </ul>
+    return (
+      <>
+        <h3 style={{ margin: "0 0 4px" }}>
+          Day {index + 1}
+        </h3>
 
-                      <p style={{ margin: 0 }}>
-                        <strong>Hotel:</strong>{" "}
-                        {day.hotel ? (
-                          <a
-                            href={day.hotel.link}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {day.hotel.name}
-                          </a>
-                        ) : (
-                          "Not specified"
-                        )}
-                      </p>
-                    </div>
+        <ul style={{ margin: "0 0 6px", paddingLeft: 16 }}>
+          {(day.activities || []).map((a, i) => (
+            <li key={i}>{a}</li>
+          ))}
+        </ul>
+
+        {day.hotel && (
+  <p style={{ margin: 0 }}>
+    <strong>Hotel:</strong>{" "}
+    <a href={day.hotel.link} target="_blank" rel="noreferrer">
+      {day.hotel.name}
+    </a>
+  </p>
+)}
+
+      </>
+    );
+  })()}
+</div>
+
                   </div>
                 )}
               </SortableDayWrapper>

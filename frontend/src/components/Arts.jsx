@@ -1,7 +1,8 @@
-import pochampallyImg from "../assets/project images/Pochampally saree.jpg";
-import phadImg from "../assets/project images/Phad painting.jpg";
-import cheriyalImg from "../assets/project images/Cheriyal Scroll Painting.jpg";
-import kalamkariImg from "../assets/project images/Kalamkari painting.jpg";
+const pochampallyImg = "/images/pochampally-saree.jpg";
+const phadImg = "/images/phad-painting.jpg";
+const cheriyalImg = "/images/cheriyal-scroll-painting.jpg";
+const kalamkariImg = "/images/kalamkari-painting.jpg";
+
 
 export default function Arts() {
   const ARTS = [
